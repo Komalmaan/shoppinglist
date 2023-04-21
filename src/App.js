@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import "@aws-amplify/ui-react/styles.css";
-import { API } from "aws-amplify";
-import { API, Storage } from "aws-amplify";
+import { API, Storage} from "aws-amplify";
+
 
 import {
   Button,
@@ -46,14 +46,14 @@ const App = ({ signOut }) => {
     event.preventDefault();
     const form = new FormData(event.target);
     const imageFile = form.get("image");
-    const image= imageFile.Tomatoes.jpg;
+    const image= imageFile.name;
     const data = {
       name: form.get("name"),
       description: form.get("description"),
       price: form.get("price"),
-      image: image.name,
+      image: image,
     };
-    if (!!image) await Storage.put(Tomatoes.jpg,imageFile);
+    if (!!image) await Storage.put(image,imageFile);
     
     await API.graphql({
       query: createNoteMutation,
