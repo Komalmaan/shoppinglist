@@ -1,24 +1,80 @@
-import logo from "./logo.svg";
-import "@aws-amplify/ui-react/styles.css";
+import { API, Storage } from 'aws-amplify';
 import {
-  withAuthenticator,
   Button,
+  Flex,
   Heading,
   Image,
+  Text,
+  TextField,
   View,
-  Card,
-} from "@aws-amplify/ui-react";
-
-function App({ signOut }) {
-  return (
-    <View className="App">
-      <Card>
-        <Image src={logo} className="App-logo" alt="logo" />
-        <Heading level={1}>We now have Auth!</Heading>
-      </Card>
-      <Button onClick={signOut}>Sign Out</Button>
-    </View>
+  withAuthenticator,
+} from '@aws-amplify/ui-react';
+async function fetchNotes() {
+  const apiData = await API.graphql({ query: listNotes });
+  const notesFromAPI = apiData.data.listNotes.items;
+  await Promise.all(
+    notesFromAPI.map(async (note) => {
+      if (note.image) {
+        const url = await Storage.get(note.name);
+        note.image = url;
+      }
+      return note;
+    })
   );
+  setNotes(notesFromAPI);
 }
-
-export default withAuthenticator(App);
+async function createNote(event) {
+  event.preventDefault();
+  const form = new FormData(event.target);
+  const image = form.get("image");
+  const data = {
+    name: form.get("name"),
+    description: form.get("description"),
+    image: image.name,
+  };
+  if (!!data.image) await Storage.put(data.name, image);
+  await API.graphql({
+    query: createNoteMutation,
+    variables: { input: data },
+  });
+  fetchNotes();
+  event.target.reset();
+}
+async function deleteNote({ id, name }) {
+  const newNotes = notes.filter((note) => note.id !== id);
+  setNotes(newNotes);
+  await Storage.remove(name);
+  await API.graphql({
+    query: deleteNoteMutation,
+    variables: { input: { id } },
+  });
+}
+<View
+  name="image"
+  as="input"
+  type="file"
+  style={{ alignSelf: "end" }}
+/>
+{notes.map((note) => (
+  <Flex
+    key={note.id || note.name}
+    direction="row"
+    justifyContent="center"
+    alignItems="center"
+  >
+    <Text as="strong" fontWeight={700}>
+      {note.name}
+    </Text>
+    <Text as="span">{note.description}</Text>
+    {note.image && (
+      <Image
+        src={note.image}
+        alt={`visual aid for ${notes.name}`}
+        style={{ width: 400 }}
+      />
+    )}
+    <Button variation="link" onClick={() => deleteNote(note)}>
+      Delete note
+    </Button>
+  </Flex>
+))}

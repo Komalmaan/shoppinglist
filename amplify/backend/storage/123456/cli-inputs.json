@@ -1,0 +1,12 @@
+{
+  "resourceName": "123456",
+  "policyUUID": "919c634c",
+  "bucketName": "shoppinglist",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
