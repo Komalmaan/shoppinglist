@@ -142,4 +142,4 @@ const App = ({ signOut }) => {
   );
 };
 
-export default withAuthenticator(App);last
+export default withAuthenticator(App);
