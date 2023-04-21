@@ -21,7 +21,12 @@ import {
 
 const App = ({ signOut }) => {
   const [notes, setNotes] = useState([]);
-
+  const [totalPrice, setTotalPrice] = useState(0);
+  useEffect(() => {
+    const priceArray = notes.map((note) => parseFloat(note.price));
+    const totalPrice = priceArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+    setTotalPrice(totalPrice);
+  }, [notes]);
   useEffect(() => {
     fetchNotes();
   }, []);
@@ -100,6 +105,8 @@ const App = ({ signOut }) => {
             variation="quiet"
             required
           />
+          <Text>Total Price: {totalPrice}</Text>
+
           <View
   name="image"
   as="input"
@@ -120,7 +127,7 @@ const App = ({ signOut }) => {
     justifyContent="center"
     alignItems="center"
   >
-    <Text as="strong" fontWeight={700}>
+    <Text as="strong" fontWeight={500}>
       {note.name}
     </Text>
     <Text as="span">{note.description}</Text>
@@ -128,7 +135,8 @@ const App = ({ signOut }) => {
       <Image
         src={note.image}
         alt={`visual aid for ${notes.name}`}
-        style={{ width: 400 }}
+        style={{ width: 200 }}
+        
       />
     )}
     <Button variation="link" onClick={() => deleteNote(note)}>
