@@ -53,6 +53,7 @@ const App = ({ signOut }) => {
     const data = {
       name: form.get("name"),
       description: form.get("description"),
+      price: form.get("price"),
       image: image.name,
     };
     if (!!data.image) await Storage.put(data.name, image);
