@@ -40,15 +40,16 @@ const App = ({ signOut }) => {
           const url = await Storage.get(note.name);
           note.image = url;
         }
-        return note;
-      })
-    );
-    setNotes(
-      notesFromAPI.map((note) => ({
-        ...note,
-        price: parseFloat(note.price)
-      }))
-    );
+        // Calculate total price and add it to the note object
+      const totalPrice = note.price * note.quantity;
+      note.totalPrice = totalPrice;
+      return note;
+    })
+  );
+  setNotes(notesFromAPI);
+}
+        
+    
   }
 
   async function createNote(event) {
