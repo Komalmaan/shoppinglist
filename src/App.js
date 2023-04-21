@@ -40,13 +40,16 @@ const App = ({ signOut }) => {
           const url = await Storage.get(note.name);
           note.image = url;
         }
-        // Calculate total price and add it to the note object
-      const totalPrice = note.price * note.quantity;
-      note.totalPrice = totalPrice;
+        
       return note;
     })
   );
-  setNotes(notesFromAPI);
+  setNotes(
+    notesFromAPI.map((note) => ({
+      ...note,
+      price: parseFloat(note.price)
+    }))
+  );
 }
         
     
@@ -158,6 +161,6 @@ const App = ({ signOut }) => {
     </View>
     
   );
-};
+
 
 export default withAuthenticator(App);
