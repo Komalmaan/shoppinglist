@@ -21,6 +21,11 @@ import {
 
 const App = ({ signOut }) => {
   const [notes, setNotes] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+  useEffect(() => {
+    const total = notes.reduce((acc, note) => acc + note.price, 0);
+    setTotalPrice(total);
+  }, [notes]);
 
   useEffect(() => {
     fetchNotes();
@@ -38,7 +43,12 @@ const App = ({ signOut }) => {
         return note;
       })
     );
-    setNotes(notesFromAPI);
+    setNotes(
+      notesFromAPI.map((note) => ({
+        ...note,
+        price: parseFloat(note.price)
+      }))
+    );
   }
 
   async function createNote(event) {
@@ -49,6 +59,7 @@ const App = ({ signOut }) => {
       name: form.get("name"),
       description: form.get("description"),
       image: image.name,
+      
     };
     if (!!data.image) await Storage.put(data.name, image);
     await API.graphql({
@@ -75,6 +86,9 @@ const App = ({ signOut }) => {
     <View className="App">
       <Heading level={1}>shopping list</Heading>
       <View as="form" margin="3rem 0" onSubmit={createNote}>
+      <View>
+  <Text>Total price: ${totalPrice.toFixed(2)}</Text>
+</View>
         <Flex direction="row" justifyContent="center">
           <TextField
             name="name"
@@ -105,6 +119,7 @@ const App = ({ signOut }) => {
   as="input"
   type="file"
   style={{ alignSelf: "end" }}
+  
 />
           <Button type="submit" variation="primary">
             Create Note
@@ -136,9 +151,11 @@ const App = ({ signOut }) => {
     </Button>
   </Flex>
 ))}
+
       </View>
       <Button onClick={signOut}>Sign Out</Button>
     </View>
+    
   );
 };
 
