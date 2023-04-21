@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import "@aws-amplify/ui-react/styles.css";
-import { API, Storage} from "aws-amplify";
-
-
+import { API, Storage } from 'aws-amplify';
 import {
   Button,
   Flex,
@@ -13,7 +11,8 @@ import {
   TextField,
   View,
   withAuthenticator,
-} from "@aws-amplify/ui-react";
+} from '@aws-amplify/ui-react';
+
 import { listNotes } from "./graphql/queries";
 import {
   createNote as createNoteMutation,
@@ -45,16 +44,13 @@ const App = ({ signOut }) => {
   async function createNote(event) {
     event.preventDefault();
     const form = new FormData(event.target);
-    const imageFile = form.get("image");
-    const image= imageFile.name;
+    const image = form.get("image");
     const data = {
       name: form.get("name"),
       description: form.get("description"),
-      price: form.get("price"),
-      image: image,
+      image: image.name,
     };
-    if (!!image) await Storage.put(image,imageFile);
-    
+    if (!!data.image) await Storage.put(data.name, image);
     await API.graphql({
       query: createNoteMutation,
       variables: { input: data },
@@ -67,38 +63,36 @@ const App = ({ signOut }) => {
   async function deleteNote({ id, name }) {
     const newNotes = notes.filter((note) => note.id !== id);
     setNotes(newNotes);
-    if(!!image){
-    await Storage.remove(image);
-    }
+    await Storage.remove(name);
     await API.graphql({
       query: deleteNoteMutation,
       variables: { input: { id } },
     });
   }
-  
+
 
   return (
     <View className="App">
-      <Heading level={1}>Shopping List</Heading>
+      <Heading level={1}>shopping list</Heading>
       <View as="form" margin="3rem 0" onSubmit={createNote}>
         <Flex direction="row" justifyContent="center">
           <TextField
             name="name"
-            placeholder="Food Name"
-            label="Food Name"
+            placeholder="food Name"
+            label="food Name"
             labelHidden
             variation="quiet"
             required
           />
           <TextField
             name="description"
-            placeholder="Food Description"
-            label="Food Description"
+            placeholder="food Description"
+            label="food Description"
             labelHidden
             variation="quiet"
             required
           />
-          <TextField
+           <TextField
             name="price"
             placeholder="Food Price"
             label="Food Price"
@@ -106,28 +100,18 @@ const App = ({ signOut }) => {
             variation="quiet"
             required
           />
-          <view style={{position:"relative"}}>
-            <view as="input" name="image" type="file"/>
-            <Text
-              as="span"
-              style={{ position: "absolute", bottom: "-2rem", left: 0 }}
-            >
-              Upload Image
-            </Text>
-          </view>
-    
-          <Button type="submit" variation="primary">
-            Create Food
-          </Button>
-        </Flex>
-      </View>
-      
+          <View
   name="image"
   as="input"
   type="file"
   style={{ alignSelf: "end" }}
-
-      <Heading level={2}>Current Item</Heading>
+/>
+          <Button type="submit" variation="primary">
+            Create Note
+          </Button>
+        </Flex>
+      </View>
+      <Heading level={2}>Current items</Heading>
       <View margin="3rem 0">
       {notes.map((note) => (
   <Flex
@@ -140,7 +124,6 @@ const App = ({ signOut }) => {
       {note.name}
     </Text>
     <Text as="span">{note.description}</Text>
-    <Text as="span">{note.price}</Text>
     {note.image && (
       <Image
         src={note.image}
@@ -152,17 +135,11 @@ const App = ({ signOut }) => {
       Delete note
     </Button>
   </Flex>
-
 ))}
       </View>
       <Button onClick={signOut}>Sign Out</Button>
-      
-
-
     </View>
-    
-
   );
 };
 
-export default withAuthenticator(App)
+export default withAuthenticator(App);
