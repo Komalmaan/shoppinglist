@@ -21,12 +21,7 @@ import {
 
 const App = ({ signOut }) => {
   const [notes, setNotes] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
-  useEffect(() => {
-    const priceArray = notes.map((note) => parseFloat(note.price));
-    const totalPrice = priceArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-    setTotalPrice(totalPrice);
-  }, [notes]);
+
   useEffect(() => {
     fetchNotes();
   }, []);
@@ -40,6 +35,7 @@ const App = ({ signOut }) => {
           const url = await Storage.get(note.name);
           note.image = url;
         }
+        
         return note;
       })
     );
@@ -50,11 +46,12 @@ const App = ({ signOut }) => {
     event.preventDefault();
     const form = new FormData(event.target);
     const image = form.get("image");
+    
     const data = {
       name: form.get("name"),
       description: form.get("description"),
-      price: form.get("price"),
       image: image.name,
+      
     };
     if (!!data.image) await Storage.put(data.name, image);
     await API.graphql({
@@ -106,16 +103,6 @@ const App = ({ signOut }) => {
             variation="quiet"
             required
           />
-          <TextField
-            name="Totalprice"
-            placeholder="TotalFood Price"
-            label="TotalFood Price"
-            labelHidden
-            variation="quiet"
-            required
-          />
-          
-
           <View
   name="image"
   as="input"
@@ -136,7 +123,7 @@ const App = ({ signOut }) => {
     justifyContent="center"
     alignItems="center"
   >
-    <Text as="strong" fontWeight={500}>
+    <Text as="strong" fontWeight={700}>
       {note.name}
     </Text>
     <Text as="span">{note.description}</Text>
@@ -144,8 +131,7 @@ const App = ({ signOut }) => {
       <Image
         src={note.image}
         alt={`visual aid for ${notes.name}`}
-        style={{ width: 200 }}
-        
+        style={{ width: 100 }}
       />
     )}
     <Button variation="link" onClick={() => deleteNote(note)}>
