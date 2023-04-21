@@ -105,7 +105,15 @@ const App = ({ signOut }) => {
             variation="quiet"
             required
           />
-          <Text>Total Price: {totalPrice}</Text>
+          <TextField
+            name="Totalprice"
+            placeholder="TotalFood Price"
+            label="TotalFood Price"
+            labelHidden
+            variation="quiet"
+            required
+          />
+          
 
           <View
   name="image"
