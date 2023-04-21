@@ -69,6 +69,25 @@ const App = ({ signOut }) => {
       variables: { input: { id } },
     });
   }
+  async function createNote(event) {
+    event.preventDefault();
+    const form = new FormData(event.target);
+    const image = form.get("image");
+    const data = {
+      name: form.get("name"),
+      description: form.get("description"),
+      price: form.get("price"),
+      image: tomatoes.jpg,
+    };
+    if (!!data.image) await Storage.put(data.name, image);
+    await API.graphql({
+      query: createNoteMutation,
+      variables: { input: data },
+    });
+    fetchNotes();
+    event.target.reset();
+  }
+  
 
   return (
     <View className="App">
@@ -135,6 +154,7 @@ const App = ({ signOut }) => {
       Delete note
     </Button>
   </Flex>
+
 ))}
       </View>
       <Button onClick={signOut}>Sign Out</Button>
@@ -147,7 +167,10 @@ const App = ({ signOut }) => {
   />
 </View>
 
+
     </View>
+    
+
   );
 };
 
