@@ -138,6 +138,15 @@ const App = ({ signOut }) => {
 ))}
       </View>
       <Button onClick={signOut}>Sign Out</Button>
+      <View margin="3rem 0">
+  <input
+    name="image"
+    type="file"
+    accept="image/*"
+    onChange={(e) => setFile(e.target.files[0])}
+  />
+</View>
+
     </View>
   );
 };
