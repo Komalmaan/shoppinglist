@@ -50,7 +50,8 @@ const App = ({ signOut }) => {
       price: form.get("price"),
       image: image.name,
     };
-    if (!!data.image) await Storage.put(data.name, image);
+    if (!!image){ await Storage.put(data.name, image);
+    }
     await API.graphql({
       query: createNoteMutation,
       variables: { input: data },
@@ -63,7 +64,9 @@ const App = ({ signOut }) => {
   async function deleteNote({ id, name }) {
     const newNotes = notes.filter((note) => note.id !== id);
     setNotes(newNotes);
-    await Storage.remove(name);
+    if(!!image){
+    await Storage.remove(image);
+    }
     await API.graphql({
       query: deleteNoteMutation,
       variables: { input: { id } },
@@ -100,17 +103,27 @@ const App = ({ signOut }) => {
             variation="quiet"
             required
           />
+          <view style={{position:"relative"}}>
+            <view as="input" name="image" type="file"/>
+            <Text
+              as="span"
+              style={{ position: "absolute", bottom: "-2rem", left: 0 }}
+            >
+              Upload Image
+            </Text>
+          </view>
+    
           <Button type="submit" variation="primary">
             Create Food
           </Button>
         </Flex>
       </View>
-      <View
+      
   name="image"
   as="input"
   type="file"
   style={{ alignSelf: "end" }}
-/>
+
       <Heading level={2}>Current Item</Heading>
       <View margin="3rem 0">
       {notes.map((note) => (
@@ -140,14 +153,7 @@ const App = ({ signOut }) => {
 ))}
       </View>
       <Button onClick={signOut}>Sign Out</Button>
-      <View margin="3rem 0">
-  <input
-    name="image"
-    type="file"
-    accept="image/*"
-    onChange={(e) => setFile(e.target.files[0])}
-  />
-</View>
+      
 
 
     </View>
