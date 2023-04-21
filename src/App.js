@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import "@aws-amplify/ui-react/styles.css";
 import { API } from "aws-amplify";
+import { API, Storage } from "aws-amplify";
+
 import {
   Button,
   Flex,
@@ -43,15 +45,16 @@ const App = ({ signOut }) => {
   async function createNote(event) {
     event.preventDefault();
     const form = new FormData(event.target);
-    const image = form.get("image");
+    const imageFile = form.get("image");
+    const image= imageFile.Tomatoes.jpg;
     const data = {
       name: form.get("name"),
       description: form.get("description"),
       price: form.get("price"),
       image: image.name,
     };
-    if (!!image){ await Storage.put(data.name, image);
-    }
+    if (!!image) await Storage.put(Tomatoes.jpg,imageFile);
+    
     await API.graphql({
       query: createNoteMutation,
       variables: { input: data },
